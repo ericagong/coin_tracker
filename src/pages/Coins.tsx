@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import styled from "styled-components";
+
+import Coin from "../components/Coin";
 
 interface CoinInterface {
   id: string;
@@ -13,7 +14,7 @@ interface CoinInterface {
 }
 
 const Coins = () => {
-  const [infos, setInfos] = useState<CoinInterface[]>([]);
+  const [info, setInfo] = useState<CoinInterface[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -22,25 +23,12 @@ const Coins = () => {
       const resp = await fetch("https://api.coinpaprika.com/v1/coins");
       // fetch에는 한번 더 await 사용 필요
       const json = await resp.json();
-      setInfos(json.slice(0, 100));
+      setInfo(json.slice(0, 100));
       setLoading(false);
     })();
   }, []);
 
-  const coins = infos.map((coin) => (
-    // arrow 등 특수문자 추가
-    <Coin key={coin.id}>
-      {/* rrd v5 */}
-      {/* <Link to={{ pathname: `/${coin.id}`, state: { name: coin.name } }} ></Link> */}
-      <Link to={`/${coin.id}`} state={{ name: coin.name }}>
-        <Img
-          src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`}
-          alt={`${coin.symbol.toLowerCase()}_img`}
-        />
-        {coin.name} &rarr;
-      </Link>
-    </Coin>
-  ));
+  const coins = info.map((coin) => <Coin key={coin.id} {...coin} />);
   return (
     <>
       <Container>
@@ -82,29 +70,4 @@ const Loader = styled.span`
 
 const CoinList = styled.ul`
   padding: 20px 0px;
-`;
-
-const Coin = styled.li`
-  background-color: ${(props) => props.theme.textColor};
-  color: ${(props) => props.theme.bgColor};
-  margin-bottom: 10px;
-  border-radius: 15px;
-  a {
-    display: flex;
-    transition: color 0.2s ease-in;
-    align-items: center;
-    padding: 20px; // card 내부 모두 클릭 가능.
-  }
-  &:hover {
-    cursor: pointer;
-    a {
-      color: ${(props) => props.theme.accentColor};
-    }
-  }
-`;
-
-const Img = styled.img`
-  width: 30px;
-  height: 30px;
-  margin-right: 10px;
 `;
