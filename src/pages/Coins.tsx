@@ -1,43 +1,42 @@
-// <a href=''> 를 사용하는 것은 페이지를 새로고침해버리기 때문에, 정보가 날아갈 수 있음. 사용해선 안됨!
-// Link는 페이지 새로고침 하지 않음.
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 
+interface CoinInterface {
+  id: string;
+  name: string;
+  symbol: string;
+  rank: number;
+  is_new: boolean;
+  is_active: boolean;
+  type: string;
+}
+
 const Coins = () => {
-  const infos = [
-    {
-      id: "btc-bitcoin",
-      name: "Bitcoin",
-      symbol: "BTC",
-      rank: 1,
-      is_new: false,
-      is_active: true,
-      type: "coin",
-    },
-    {
-      id: "eth-ethereum",
-      name: "Ethereum",
-      symbol: "ETH",
-      rank: 2,
-      is_new: false,
-      is_active: true,
-      type: "coin",
-    },
-    {
-      id: "hex-hex",
-      name: "HEX",
-      symbol: "HEX",
-      rank: 3,
-      is_new: false,
-      is_active: true,
-      type: "token",
-    },
-  ];
+  const [infos, setInfos] = useState<CoinInterface[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // ()(); function 바로 실행하는 방법
+    (async () => {
+      const resp = await fetch("https://api.coinpaprika.com/v1/coins");
+      // fetch에는 한번 더 await 사용 필요
+      const json = await resp.json();
+      setInfos(json.slice(0, 100));
+      setLoading(false);
+    })();
+  }, []);
 
   const coins = infos.map((coin) => (
     // arrow 등 특수문자 추가
     <Coin key={coin.id}>
-      <Link to={`/${coin.id}`}>{coin.name} &rarr;</Link>
+      <Link to={`/${coin.id}`}>
+        <Img
+          src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`}
+          alt={`${coin.symbol.toLowerCase()}_img`}
+        />
+        {coin.name} &rarr;
+      </Link>
     </Coin>
   ));
   return (
@@ -46,7 +45,7 @@ const Coins = () => {
         <Header>
           <Title>Coins</Title>
         </Header>
-        <CoinList>{coins}</CoinList>
+        {!loading ? <CoinList>{coins}</CoinList> : <Loader>loading...</Loader>}
       </Container>
     </>
   );
@@ -55,14 +54,28 @@ const Coins = () => {
 export default Coins;
 
 const Container = styled.div`
-  padding: 10px 20px;
+  padding: 30px 20px;
+  max-width: 480px;
+  // center
+  margin: 0 auto;
 `;
 
-const Header = styled.div``;
+const Header = styled.div`
+  height: 15vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
 
 const Title = styled.h1`
-  font-size: 1.5rem;
+  font-size: 2rem;
   color: ${(props) => props.theme.accentColor};
+`;
+
+const Loader = styled.span`
+  padding: 20px 0px;
+  text-align: center;
+  display: block;
 `;
 
 const CoinList = styled.ul`
@@ -75,8 +88,9 @@ const Coin = styled.li`
   margin-bottom: 10px;
   border-radius: 15px;
   a {
+    display: flex;
     transition: color 0.2s ease-in;
-    display: block; // card 끝까지 늘려 클릭 가능하게 조정.
+    align-items: center;
     padding: 20px; // card 내부 모두 클릭 가능.
   }
   &:hover {
@@ -85,4 +99,10 @@ const Coin = styled.li`
       color: ${(props) => props.theme.accentColor};
     }
   }
+`;
+
+const Img = styled.img`
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
 `;
