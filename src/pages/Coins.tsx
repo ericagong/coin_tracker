@@ -30,7 +30,9 @@ const Coins = () => {
   const coins = infos.map((coin) => (
     // arrow 등 특수문자 추가
     <Coin key={coin.id}>
-      <Link to={`/${coin.id}`}>
+      {/* rrd v5 */}
+      {/* <Link to={{ pathname: `/${coin.id}`, state: { name: coin.name } }} ></Link> */}
+      <Link to={`/${coin.id}`} state={{ name: coin.name }}>
         <Img
           src={`https://coinicons-api.vercel.app/api/icon/${coin.symbol.toLowerCase()}`}
           alt={`${coin.symbol.toLowerCase()}_img`}
