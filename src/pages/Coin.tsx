@@ -1,10 +1,14 @@
-import { useParams, useLocation, Link, Outlet } from "react-router-dom";
+import {
+  useParams,
+  useLocation,
+  Link,
+  Outlet,
+  useMatch,
+} from "react-router-dom";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
 import CoinLayout from "../components/CoinLayout";
-import Chart from "../components/Chart";
-import Price from "../components/Price";
 
 // interface Params {
 //   id: string;
@@ -89,6 +93,8 @@ const Coin = () => {
   const [loading, setLoading] = useState(true);
   const [info, setInfo] = useState<IInfoData>();
   const [priceInfo, setPriceInfo] = useState<IPriceData>();
+  const priceMatch = useMatch("/:id/price");
+  const chartMatch = useMatch("/:id/chart");
 
   useEffect(() => {
     (async () => {
@@ -115,8 +121,14 @@ const Coin = () => {
       {!loading ? (
         <>
           <CoinLayout info={info} priceInfo={priceInfo} />
-          <Link to={`/${id}/chart`}>Price</Link>
-          <Link to={`/${id}/price`}>Chart</Link>
+          <Tabs>
+            <Tab isActive={chartMatch !== null}>
+              <Link to={`/${id}/chart`}>Chart</Link>
+            </Tab>
+            <Tab isActive={priceMatch !== null}>
+              <Link to={`/${id}/price`}>Price</Link>
+            </Tab>
+          </Tabs>
           <Outlet />
           {/* v6 - outlet 사용 없이 바로 적기 */}
           {/* <Routes>
@@ -167,4 +179,26 @@ const Loader = styled.span`
   padding: 20px 0px;
   text-align: center;
   display: block;
+`;
+
+const Tabs = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  margin: 25px 0px;
+  gap: 10px;
+`;
+
+const Tab = styled.span<{ isActive: boolean }>`
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 400;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 7px 0px;
+  border-radius: 10px;
+  color: ${(props) =>
+    props.isActive ? props.theme.accentColor : props.theme.textColor};
+  a {
+    display: block;
+  }
 `;
