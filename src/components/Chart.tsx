@@ -20,6 +20,7 @@ interface IChartData {
   volume: string;
 }
 
+// TODO chartData 없는 경우 에러잡기
 const Chart = () => {
   const { id } = useOutletContext<IChartProps>();
 
@@ -45,8 +46,7 @@ const Chart = () => {
           options={{
             chart: {
               id: "price",
-              height: 500,
-              width: 500,
+              width: "100%",
               toolbar: { show: false },
               background: "transparent",
             },
@@ -66,11 +66,28 @@ const Chart = () => {
               axisBorder: {
                 show: false,
               },
+              type: "datetime",
+              categories: chartData?.map((price) =>
+                new Date(price.time_close * 1000).toISOString()
+              ),
             },
             grid: {
               show: false,
             },
             stroke: { curve: "smooth", width: 3 },
+            fill: {
+              type: "gradient",
+              gradient: { gradientToColors: ["#0be881"], stops: [0, 100] },
+            },
+            colors: ["#0fbcf9"],
+            tooltip: {
+              x: {
+                format: "yyyy.MM.dd",
+              },
+              y: {
+                formatter: (value) => `$ ${value.toFixed(3)}`,
+              },
+            },
           }}
         />
       ) : (

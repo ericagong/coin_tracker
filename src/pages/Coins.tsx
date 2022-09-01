@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 // import { useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
 import styled from "styled-components";
 
 import { fetchCoins } from "../shared/api";
@@ -44,6 +45,10 @@ const Coins = () => {
   return (
     <>
       <Container>
+        {/* change head of document */}
+        <Helmet>
+          <title>Coins</title>
+        </Helmet>
         <Header>
           <Title>Coins</Title>
         </Header>

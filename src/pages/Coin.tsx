@@ -6,8 +6,9 @@ import {
   useMatch,
 } from "react-router-dom";
 // import { useEffect, useState } from "react";
-import styled from "styled-components";
+import { Helmet } from "react-helmet";
 import { useQuery } from "@tanstack/react-query";
+import styled from "styled-components";
 
 import { fetchCoinInfo, fetchCoinPrice } from "../shared/api";
 import CoinLayout from "../components/CoinLayout";
@@ -119,12 +120,20 @@ const Coin = () => {
   );
   const { isLoading: priceLoading, data: priceData } = useQuery<IPriceData>(
     [["price", id]],
-    () => fetchCoinPrice(id)
+    () => fetchCoinPrice(id),
+    {
+      refetchInterval: 10000, // 10s마다 refetch
+    }
   );
   const loading = infoLoading || priceLoading;
 
   return (
     <Container>
+      <Helmet>
+        <title>
+          {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
+        </title>
+      </Helmet>
       <Header>
         {/* url 바로 치고 들어오는 비정상 접근 경우 해결 */}
         <Title>
@@ -142,7 +151,7 @@ const Coin = () => {
               <Link to={`/${id}/price`}>Price</Link>
             </Tab>
           </Tabs>
-          <Outlet context={{ id }} />
+          <Outlet context={{ id: id }} />
           <>
             {/* v6 - outlet 사용 없이 바로 적기 */}
             {/* <Routes>
