@@ -142,7 +142,7 @@ const Coin = () => {
               <Link to={`/${id}/price`}>Price</Link>
             </Tab>
           </Tabs>
-          <Outlet />
+          <Outlet context={{ id }} />
           <>
             {/* v6 - outlet 사용 없이 바로 적기 */}
             {/* <Routes>
