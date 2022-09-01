@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+// import { useEffect, useState } from "react";
 import styled from "styled-components";
 
+import { fetchCoins } from "../shared/api";
 import Coin from "../components/Coin";
 
-interface CoinInterface {
+interface ICoin {
   id: string;
   name: string;
   symbol: string;
@@ -14,7 +16,8 @@ interface CoinInterface {
 }
 
 const Coins = () => {
-  const [info, setInfo] = useState<CoinInterface[]>([]);
+  /* without react-qeury
+	const [info, setInfo] = useState<CoinInterface[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,15 +30,29 @@ const Coins = () => {
       setLoading(false);
     })();
   }, []);
+	*/
 
-  const coins = info.map((coin) => <Coin key={coin.id} {...coin} />);
+  // useQuery hook은 fetcherFunc를 부르고,
+  // 해당 함수 진행중 여부에 따라 isLoading 값을 부여
+  // 함수 종료되면 data에 함수 리턴값 넣어줌
+  const { isLoading, data } = useQuery<ICoin[]>(["allCoins"], fetchCoins);
+
+  // const coins = info.map((coin) => <Coin key={coin.id} {...coin} />);
+  const coins = data
+    ?.slice(0, 100)
+    .map((coin) => <Coin key={coin.id} {...coin} />);
   return (
     <>
       <Container>
         <Header>
           <Title>Coins</Title>
         </Header>
-        {!loading ? <CoinList>{coins}</CoinList> : <Loader>loading...</Loader>}
+        {!isLoading ? (
+          <CoinList>{coins}</CoinList>
+        ) : (
+          <Loader>loading...</Loader>
+        )}
+        {/* {!loading ? <CoinList>{coins}</CoinList> : <Loader>loading...</Loader>} */}
       </Container>
     </>
   );

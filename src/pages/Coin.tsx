@@ -130,12 +130,13 @@ const Coin = () => {
             </Tab>
           </Tabs>
           <Outlet />
-          {/* v6 - outlet 사용 없이 바로 적기 */}
-          {/* <Routes>
+          <>
+            {/* v6 - outlet 사용 없이 바로 적기 */}
+            {/* <Routes>
             <Route path='price' element={<Price />} />
             <Route path='chart' element={<Chart />} />
           </Routes> */}
-          {/* v5
+            {/* v5
 					<Switch>
             <Route path={`/${id}/price`}>
               <Price />
@@ -144,6 +145,7 @@ const Coin = () => {
               <Chart />
             </Route>
           </Switch> */}
+          </>
         </>
       ) : (
         <Loader>loading...</Loader>

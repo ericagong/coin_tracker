@@ -1,5 +1,6 @@
 import { createGlobalStyle } from "styled-components";
 import Routers from "./routes/Routers";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 // reset all html tags with createGlobalStyle
 const GlobalStyle = createGlobalStyle`
@@ -80,6 +81,7 @@ const App = () => {
     <>
       <GlobalStyle />
       <Routers />
+      <ReactQueryDevtools initialIsOpen={true} />
     </>
   );
 };
