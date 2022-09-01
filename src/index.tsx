@@ -4,8 +4,8 @@ import { ThemeProvider } from "styled-components";
 
 import { darkTheme } from "./theme";
 import App from "./App";
-import reportWebVitals from "./reportWebVitals";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import reportWebVitals from "./reportWebVitals";
 
 const queryClient = new QueryClient();
 

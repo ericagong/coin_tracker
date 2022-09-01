@@ -5,9 +5,11 @@ import {
   Outlet,
   useMatch,
 } from "react-router-dom";
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 import styled from "styled-components";
+import { useQuery } from "@tanstack/react-query";
 
+import { fetchCoinInfo, fetchCoinPrice } from "../shared/api";
 import CoinLayout from "../components/CoinLayout";
 
 // interface Params {
@@ -90,37 +92,48 @@ const Coin = () => {
   // const { state } = useLocation<RouteState>();
   const { state } = useLocation() as ILocation;
 
-  const [loading, setLoading] = useState(true);
-  const [info, setInfo] = useState<IInfoData>();
-  const [priceInfo, setPriceInfo] = useState<IPriceData>();
+  // const [loading, setLoading] = useState(true);
+  // const [info, setInfo] = useState<IInfoData>();
+  // const [priceInfo, setPriceInfo] = useState<IPriceData>();
   const priceMatch = useMatch("/:id/price");
   const chartMatch = useMatch("/:id/chart");
 
-  useEffect(() => {
-    (async () => {
-      const infoData = await (
-        await fetch(` https://api.coinpaprika.com/v1/coins/${id}`)
-      ).json();
-      const priceData = await (
-        await fetch(` https://api.coinpaprika.com/v1/tickers/${id}`)
-      ).json();
-      setInfo(infoData);
-      setPriceInfo(priceData);
-      setLoading(false);
-    })();
-  }, [id]);
+  // without react-query
+  // useEffect(() => {
+  //   (async () => {
+  //     const infoData = await (
+  //       await fetch(` https://api.coinpaprika.com/v1/coins/${id}`)
+  //     ).json();
+  //     const priceData = await (
+  //       await fetch(` https://api.coinpaprika.com/v1/tickers/${id}`)
+  //     ).json();
+  //     setInfo(infoData);
+  //     setPriceInfo(priceData);
+  //     setLoading(false);
+  //   })();
+  // }, [id]);
+
+  const { isLoading: infoLoading, data: infoData } = useQuery<IInfoData>(
+    [["info", id]],
+    () => fetchCoinInfo(id)
+  );
+  const { isLoading: priceLoading, data: priceData } = useQuery<IPriceData>(
+    [["price", id]],
+    () => fetchCoinPrice(id)
+  );
+  const loading = infoLoading || priceLoading;
 
   return (
     <Container>
       <Header>
         {/* url 바로 치고 들어오는 비정상 접근 경우 해결 */}
         <Title>
-          {state?.name ? state.name : loading ? "Loading..." : info?.name}
+          {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
         </Title>
       </Header>
       {!loading ? (
         <>
-          <CoinLayout info={info} priceInfo={priceInfo} />
+          <CoinLayout info={infoData} priceInfo={priceData} />
           <Tabs>
             <Tab isActive={chartMatch !== null}>
               <Link to={`/${id}/chart`}>Chart</Link>
