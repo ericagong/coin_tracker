@@ -1,5 +1,6 @@
 import { createGlobalStyle } from "styled-components";
 import Routers from "./routes/Routers";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 // reset all html tags with createGlobalStyle
 const GlobalStyle = createGlobalStyle`
@@ -64,11 +65,14 @@ table {
 }
 body {
 	font-family: 'Source Sans Pro', sans-serif;
+	font-weight: 300;
 	background-color: ${(props) => props.theme.bgColor};
 	color: ${(props) => props.theme.textColor};
+	line-height: 1.2;
 }
 a {
 	text-decoration: none;
+	color: inherit;
 }
 `;
 
@@ -77,6 +81,7 @@ const App = () => {
     <>
       <GlobalStyle />
       <Routers />
+      <ReactQueryDevtools initialIsOpen={true} />
     </>
   );
 };
